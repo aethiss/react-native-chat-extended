@@ -1,112 +1,85 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { FlatList } from 'react-native';
+import { Box, HStack, Heading, Text, VStack } from '@gluestack-ui/themed';
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+import { useChat } from '@/components/Chat-extended/hooks';
+import { Avatar, SearchInput } from '@/components/Chat-extended/shared';
 
-export default function TabTwoScreen() {
+const ContactsScreen = () => {
+  const { contacts, favoriteContacts } = useChat();
+  const [query, setQuery] = useState('');
+
+  const filteredContacts = useMemo(() => {
+    const text = query.trim().toLowerCase();
+    if (!text) {
+      return contacts;
+    }
+
+    return contacts.filter(
+      (contact) =>
+        contact.displayName.toLowerCase().includes(text) || contact.phoneNumber.includes(text),
+    );
+  }, [contacts, query]);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <Box flex={1} bg="$backgroundLight0" pt="$6">
+      <VStack space="lg" px="$4">
+        <Heading size="lg" color="$textDark900">
+          Contatti
+        </Heading>
+        <SearchInput value={query} onChange={setQuery} placeholder="Cerca contatti" />
+        <VStack space="md">
+          <Text fontSize="$sm" color="$mutedForeground">
+            Preferiti
+          </Text>
+          <HStack space="md">
+            {favoriteContacts.map((contact) => (
+              <VStack key={contact.id} space="sm" alignItems="center">
+                <Avatar
+                  initials={contact.initials}
+                  color={contact.avatarColor}
+                  uri={contact.avatarUri}
+                  size={56}
+                />
+                <Text
+                  fontSize="$xs"
+                  color="$mutedForeground"
+                  numberOfLines={1}
+                  maxWidth={80}
+                  textAlign="center"
+                >
+                  {contact.displayName.split(' ')[0]}
+                </Text>
+              </VStack>
+            ))}
+          </HStack>
+        </VStack>
+      </VStack>
+      <FlatList
+        data={filteredContacts}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
+        renderItem={({ item }) => (
+          <HStack alignItems="center" space="md" py="$3">
+            <Avatar
+              initials={item.initials}
+              color={item.avatarColor}
+              uri={item.avatarUri}
+              size={48}
+            />
+            <VStack flex={1}>
+              <Text fontWeight="$medium" color="$textDark900">
+                {item.displayName}
+              </Text>
+              <Text color="$mutedForeground" fontSize="$xs">
+                {item.statusMessage ?? item.phoneNumber}
+              </Text>
+            </VStack>
+          </HStack>
+        )}
+      />
+    </Box>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
+export default ContactsScreen;
