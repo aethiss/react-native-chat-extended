@@ -21,33 +21,48 @@ export const AudioMessageBubble: React.FC<AudioMessageBubbleProps> = ({
   message,
   isOwn,
   accentColor,
-}) => (
-  <MessageBubble
-    isOwnMessage={isOwn}
-    status={message.status}
-    timestamp={message.createdAt}
-    accentColor={accentColor}
-  >
-    <HStack alignItems="center" space="md">
-      <Box bg={isOwn ? 'rgba(255,255,255,0.25)' : '$success100'} borderRadius="$full" p="$2">
-        <Icon as={Play} size="sm" color={isOwn ? '$white' : '$success600'} />
-      </Box>
-      <VStack flex={1} space="sm">
-        <HStack alignItems="flex-end" space="xs">
-          {message.waveform?.slice(0, 20).map((value, index) => (
-            <Box
-              key={`${message.id}-wave-${index}`}
-              width={3}
-              borderRadius="$full"
-              bg={isOwn ? 'rgba(255,255,255,0.7)' : '$success500'}
-              height={Math.max(8, Math.min(28, value * 2))}
-            />
-          ))}
-        </HStack>
-        <Text color={isOwn ? '$white' : '$mutedForeground'} fontSize="$xs">
-          {formatDuration(message.durationSeconds)} • Voice message
-        </Text>
-      </VStack>
-    </HStack>
-  </MessageBubble>
-);
+}) => {
+  const iconWrapperBg = isOwn ? 'rgba(255,255,255,0.25)' : 'rgba(15, 23, 42, 0.08)';
+  const iconColor = isOwn ? '$white' : accentColor;
+  const trackBg = isOwn ? 'rgba(255,255,255,0.35)' : '$backgroundLight300';
+  const progressBg = isOwn ? '$white' : accentColor;
+  const secondaryTextColor = isOwn ? 'rgba(255,255,255,0.85)' : '$mutedForeground';
+  const primaryTextColor = isOwn ? '$white' : '$textDark900';
+
+  const progress = message.isListened ? 1 : Math.min(0.65, (message.waveform?.length ?? 0) / 25);
+
+  return (
+    <MessageBubble
+      isOwnMessage={isOwn}
+      status={message.status}
+      timestamp={message.createdAt}
+      accentColor={accentColor}
+    >
+      <HStack alignItems="center" space="md">
+        <Box
+          width={44}
+          height={44}
+          borderRadius={22}
+          bg={iconWrapperBg}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Icon as={Play} size="sm" color={iconColor} />
+        </Box>
+        <VStack flex={1} space="xs">
+          <Box height={3} borderRadius="$full" overflow="hidden" bg={trackBg}>
+            <Box height="100%" width={`${Math.max(0.2, progress) * 100}%`} bg={progressBg} />
+          </Box>
+          <HStack alignItems="center" justifyContent="space-between">
+            <Text color={secondaryTextColor} fontSize="$xs">
+              0:00
+            </Text>
+            <Text color={primaryTextColor} fontSize="$xs" fontWeight="$medium">
+              {formatDuration(message.durationSeconds)}
+            </Text>
+          </HStack>
+        </VStack>
+      </HStack>
+    </MessageBubble>
+  );
+};
