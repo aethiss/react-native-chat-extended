@@ -15,11 +15,16 @@ const GroupChatScreen = () => {
     [getGroupById, groupId],
   );
 
+  const groupIdValue = group?.id;
+  const unreadCount = group?.unreadCount ?? 0;
+
   useEffect(() => {
-    if (group) {
-      markMessagesAsRead(group.id);
+    if (!groupIdValue || unreadCount === 0) {
+      return;
     }
-  }, [group, markMessagesAsRead]);
+
+    markMessagesAsRead(groupIdValue);
+  }, [groupIdValue, unreadCount, markMessagesAsRead]);
 
   if (!group) {
     return (
