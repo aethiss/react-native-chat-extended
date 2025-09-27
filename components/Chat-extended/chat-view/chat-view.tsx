@@ -51,6 +51,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ group }) => {
           messages={group.messages}
           currentUserId={currentUser.id}
           accentColor={group.accentColor}
+          participants={group.participants}
         />
       </ImageBackground>
       {typingNames ? (

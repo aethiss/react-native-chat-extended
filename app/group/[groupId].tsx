@@ -76,6 +76,7 @@ const GroupChatScreen = () => {
             </HStack>
           ),
           headerStyle: { backgroundColor: 'white' },
+          headerTintColor: '#0f172a',
         }}
       />
       <ChatView group={group} />

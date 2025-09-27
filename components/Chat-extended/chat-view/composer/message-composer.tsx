@@ -64,20 +64,30 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({ onSend, accent
           bg="$backgroundLight200"
           borderRadius="$full"
           alignItems="center"
-          px="$2"
+          px="$3"
           py="$1"
           space="sm"
         >
           <Button variant="link" action="secondary" onPress={() => setIsSheetOpen(true)}>
             <ButtonIcon as={Paperclip} color="$mutedForeground" />
           </Button>
-          <Textarea flex={1} bg="$transparent" borderColor="$transparent">
+          <Textarea
+            flex={1}
+            bg="$transparent"
+            borderColor="$transparent"
+            borderWidth={0}
+            px="$0"
+            py="$0"
+            minHeight={40}
+            maxHeight={120}
+          >
             <TextareaInput
               value={text}
               onChangeText={setText}
               placeholder="Messaggio"
               color="$textDark900"
               multiline
+              style={{ minHeight: 36, maxHeight: 120, paddingVertical: 6, textAlignVertical: 'center' }}
             />
           </Textarea>
           <Button variant="link" action="secondary" onPress={() => handleAttachment('image')}>

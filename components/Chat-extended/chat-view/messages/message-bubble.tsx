@@ -20,30 +20,30 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   accentColor,
   children,
 }) => (
-  <HStack justifyContent={isOwnMessage ? 'flex-end' : 'flex-start'} px="$3" py="$1">
-    <Box
-      maxWidth="90%"
-      bg={isOwnMessage ? accentColor : '$backgroundLight200'}
-      borderRadius="$2xl"
-      borderBottomRightRadius={isOwnMessage ? '$md' : '$2xl'}
-      borderBottomLeftRadius={isOwnMessage ? '$2xl' : '$md'}
-      px="$3"
-      py="$2"
-      shadowColor="#000000"
-      shadowOpacity={0.05}
-      shadowRadius={6}
-    >
-      <VStack space="sm">
-        {children}
-        <HStack alignItems="center" justifyContent="flex-end" space="xs">
-          <Text fontSize="$xs" color={isOwnMessage ? '$white' : '$mutedForeground'}>
-            {formatTime(timestamp)}
-          </Text>
-          {isOwnMessage ? (
-            <MessageStatusIcon status={status} color={isOwnMessage ? '#ffffff' : '#16a34a'} />
-          ) : null}
-        </HStack>
-      </VStack>
-    </Box>
-  </HStack>
+  <Box
+    maxWidth="78%"
+    bg={isOwnMessage ? accentColor : '$backgroundLight200'}
+    borderRadius="$2xl"
+    borderBottomRightRadius={isOwnMessage ? '$md' : '$2xl'}
+    borderBottomLeftRadius={isOwnMessage ? '$2xl' : '$md'}
+    px="$3"
+    py="$2"
+    shadowColor="#000000"
+    shadowOpacity={0.05}
+    shadowRadius={6}
+    alignSelf={isOwnMessage ? 'flex-end' : 'flex-start'}
+    flexShrink={1}
+  >
+    <VStack space="sm">
+      {children}
+      <HStack alignItems="center" justifyContent="flex-end" space="xs">
+        <Text fontSize="$xs" color={isOwnMessage ? '$white' : '$mutedForeground'}>
+          {formatTime(timestamp)}
+        </Text>
+        {isOwnMessage ? (
+          <MessageStatusIcon status={status} color="#ffffff" />
+        ) : null}
+      </HStack>
+    </VStack>
+  </Box>
 );
